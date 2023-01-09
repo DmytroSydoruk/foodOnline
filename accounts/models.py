@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 
 class UserManager(BaseUserManager):
@@ -19,7 +19,28 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using= self._db)
         return user
+    # def create_user(self, email, password=None):
+
+    #     if email is None:
+    #         raise TypeError('Users must have an email address.')
+
+    #     user = self.model(email=self.normalize_email(email))
+    #     user.set_password(password)
+    #     user.save()
+    #     return user
     
+    # def create_superuser(self, email, password):
+
+    #     if password is None:
+    #         raise TypeError('Superusers must have a password.')
+
+    #     user = self.create_user(email, password)
+    #     user.is_admin = True
+    #     user.is_superuser = True
+    #     user.is_staff = True
+    #     user.save()
+
+        return user
     def create_superuser(self,  first_name, last_name, username, email, password=None):
         user = self.create_user(
             email = self.normalize_email(email),
@@ -30,13 +51,13 @@ class UserManager(BaseUserManager):
         )
         user.is_admin = True
         user.is_active = True 
-        user.is_stuff = True
+        user.is_staff = True
         user.is_superadmin = True 
         user.save(using=self._db)
         return user
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     RESTAURANT = 1
     CUSTOMER = 2
 
@@ -62,9 +83,10 @@ class User(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     is_superadmin = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    USERNAME_FIELDs = ['username', 'first_name', 'last_name']
+    USERNAME_FIELDS = ['username', 'first_name', 'last_name']
 
     objects  = UserManager()
 
@@ -76,6 +98,13 @@ class User(AbstractBaseUser):
 
     def has_module_perm(self, app_label):
         return True
+
+    def get_role(self):
+        if self.role == 1:
+            user_role = 'Restaurant'
+        elif self.role == 2:
+            user_role = 'Customer'
+        return user_role
     
 
 
