@@ -28,11 +28,20 @@ def send_verification_email(request, user: User, email_subject: str, email_templ
     to_email = user.email
     current_site = get_current_site(request)
 
-    message = render_to_string(template,{
+    message = render_to_string(template, {
         "user": user,
         'domain': current_site,
         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
         'token': default_token_generator.make_token(user),
     })
-    send_mail(email_subject, message, from_email ,[to_email], fail_silently=False)
+    send_mail(email_subject, message, from_email,
+              [to_email], fail_silently=False)
 
+
+def send_notification(email_subject: str, email_template: str, context: dict):
+    template: str = 'accounts/emails/' + email_template
+    from_email = settings.DEFAULT_FROM_EMAIL
+    to_email = context['user'].email
+    message = render_to_string(template, context)
+    send_mail(email_subject, message, from_email,
+              [to_email], fail_silently=False)
