@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "accounts",
     "vendor",
+    "menu",
 ]
 
 MIDDLEWARE = [
@@ -69,6 +70,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "accounts.context_processors.get_vendor",
+                "accounts.context_processors.get_api_key",
             ],
         },
     },
@@ -156,3 +158,5 @@ EMAIL_HOST_PASSWORD =config('EMAIL_HOST_PASSWORD')
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = f'foodOnline Marketplace <{config("EMAIL_HOST_USER")}>'
+
+MAPTILER_API_KEY = config('MAPTILER_API_KEY')

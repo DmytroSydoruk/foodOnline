@@ -1,11 +1,22 @@
 @keyframes show-toast {
-    0% {bottom: -100%;}
-    20%{bottom: 100px;}
-    80%{bottom: 100px;}
-    100%{bottom: -100px;}
+    0% {
+        bottom: -100%;
+    }
+
+    20% {
+        bottom: 100px;
+    }
+
+    80% {
+        bottom: 100px;
+    }
+
+    100% {
+        bottom: -100px;
+    }
 }
 
-.show-notification{
+.show-notification {
     position: fixed;
     bottom: 100%;
     right: 20px;
@@ -14,7 +25,7 @@
     z-index: 99;
 }
 
-.btn.btn-info{
+.btn {
     padding: 2px 1.75em;
     font-size: 12px;
     cursor: pointer;

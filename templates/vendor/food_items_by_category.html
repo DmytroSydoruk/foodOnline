@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+{% include 'includes/alerts.html' %}
+    
+<div class="main-section">
+    {% include 'includes/cover.html' %}
+    <div class="page-section account-header buyer-logged-in">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                    {% include 'includes/v_sidebar.html' %}
+                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                    <div class="user-dashboard loader-holder">
+                        <div class="user-holder">
+                            <h5 class='text-uppercase'>Category {{category}}</h5>
+                            <hr>
+                            <h6>Menu Products</h6>
+                            
+                            {% if fooditems %}
+                            <a href='#' class='btn btn-info float-right m-1'><i class="fa fa-plus" aria-hidden="true"></i> Add food</a>
+                            <button class='btn btn-secondary float-right m-1' onclick='history.back()'><i class='fa fa-angle-left' aria-hiden='true'></i>  Back</button>
+                            <table class="table table-hover table-borderless">
+                                <tbody>
+                                    {% for item in fooditems %}
+                                        <tr>
+                                            <td class='text-left'>{{forloop.counter}}</th>
+                                            <td class='text-left'><img src='{{item.image.url}}' width='60'></td>
+                                            <td class='text-left'>
+                                                <a href='#'><p class='mb-0 font-weight-bold'>{{ item }}</p></a>
+                                                <small class='text-muted'>{{ item.description }}</small>
+                                            </td>
+                                            <td><i class="fa fa-edit" aria-hidden="true"></i> &nbsp;<i class="fa fa-trash text-danger" aria-hidden="true"></i></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+
+                            {% else %}
+                            </br></br>
+                            <h5 class='text-center'> No food products found</h5>
+                            <div class='text-center'>
+                                <button class='btn btn-secondary mr-3' onclick='history.back()'><i class='fa fa-angle-left' aria-hiden='true'></i>  Back</button>
+                                <a href='#' class='btn btn-success'><i class="fa fa-plus" aria-hidden="true"></i> Add food</a>
+
+                            </div>
+
+                            {% endif %}
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main Section End -->
+
+{% endblock content %}
+    

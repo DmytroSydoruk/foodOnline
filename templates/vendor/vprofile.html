@@ -102,6 +102,19 @@
                                                     <div class="field-holder">
                                                         <label>Address *</label>
                                                         {{profile_form.address}}
+                                                        {% comment %} <script>
+                                                              var geocoder = new maptiler.Geocoder({
+                                                                input: 'id_address', // id of input element
+                                                                key: 'sgRLtHO0dUL7548L8tiZ'
+
+                                                              });
+                                                              geocoder.setLanguage('uk')
+                                                              geocoder.on('select', function(item) {
+                                                                console.log('Selected', item);
+                                                                let country = item.matching_text ;
+                                                                
+                                                              });
+                                                        </script>  {% endcomment %}
                                                         {% comment %} <small class='text-muted float-right'>powered by Google</small> {% endcomment %}
                                                     </div>
                                                 </div>
