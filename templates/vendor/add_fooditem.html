@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+{% include 'includes/alerts.html' %}
+    
+<div class="main-section">
+    {% include 'includes/cover.html' %}
+    <div class="page-section account-header buyer-logged-in">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                    {% include 'includes/v_sidebar.html' %}
+                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                    <div class="user-dashboard loader-holder">
+                        <div class="user-holder">
+                            <h5 class='text-uppercase'>Build your food menu</h5>
+                            <hr>
+                            <h6>Add your product here</h6>
+                            
+                            <form action="{% url 'add_fooditem' %}" method="post" enctype='multipart/form-data'>
+                                {% csrf_token %}
+                                <div class="form-fields-set">
+                                    <ul>
+                                        <li>
+                                            <div class="row">
+                                                
+                                                
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="field-holder">
+                                                        <label>Food Title *</label>
+                                                        {{form.food_title}}
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="field-holder ">
+                                                        <label>Food Image *</label>
+                                                        <div class="upload-gallery">
+                                                            {{form.image}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="field-holder">
+                                                        <label>Food Category *</label>
+                                                        {{form.category}}
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="field-holder">
+                                                        <label>Description *</label>
+                                                        {{form.description}}
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="field-holder">
+                                                        <label>Price *</label>
+                                                        {{form.price}}
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="field-holder">
+                                                        <label>Is Available *</label>
+                                                        {{form.is_available}}
+                                                    </div>
+                                                </div>
+
+                                                {% for field in form %}
+                                                    {% if field.errors %}
+                                                        {% for error in field.errors %}
+                                                            <li style='color:red;'>{{error}}</li>
+                                                            </br>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                {% endfor %}
+
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <div>
+                                        <div class="field-holder">
+                                            <div class="text-center">
+                                                <button class='btn btn-secondary  m-3' onclick='history.back()'><i class='fa fa-angle-left' aria-hiden='true'></i>  Back</button>
+                                                <input type="submit" value="Add product" class='btn btn-success'>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main Section End -->
+
+{% endblock content %}
+    

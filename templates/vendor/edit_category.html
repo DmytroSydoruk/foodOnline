@@ -49,6 +49,9 @@
                                 <div class='text-center'>
                                     <button class='btn btn-secondary mr-3' onclick='history.back()'><i class='fa fa-angle-left' aria-hiden='true'></i>  Back</button>
                                     <input type='submit' value ='Update' class='btn btn-success '>
+                                    <a href="{% url 'delete_category' pk=category.id %}" style='color: white;' onclick='return confirm("Do you realy want to delete this category?")' class='btn btn-danger m-3'>
+                                        <i class="fa fa-trash " aria-hidden="true"></i>  Delete
+                                    </a>
                                 </div>
 
                             </form>

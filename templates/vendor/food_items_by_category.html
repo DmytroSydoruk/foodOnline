@@ -21,7 +21,7 @@
                             <h6>Menu Products</h6>
                             
                             {% if fooditems %}
-                            <a href='#' class='btn btn-info float-right m-1'><i class="fa fa-plus" aria-hidden="true"></i> Add food</a>
+                            <a href="{% url 'add_fooditem' %}" class='btn btn-info float-right m-1'><i class="fa fa-plus" aria-hidden="true"></i> Add food</a>
                             <button class='btn btn-secondary float-right m-1' onclick='history.back()'><i class='fa fa-angle-left' aria-hiden='true'></i>  Back</button>
                             <table class="table table-hover table-borderless">
                                 <tbody>
@@ -33,7 +33,19 @@
                                                 <a href='#'><p class='mb-0 font-weight-bold'>{{ item }}</p></a>
                                                 <small class='text-muted'>{{ item.description }}</small>
                                             </td>
-                                            <td><i class="fa fa-edit" aria-hidden="true"></i> &nbsp;<i class="fa fa-trash text-danger" aria-hidden="true"></i></td>
+                                            <td>
+                                                {% if item.is_available %}
+                                                    <span class="badge badge-success">Available</span>
+                                                {% else %}
+                                                    <span class="badge badge-warning">Not Available</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a href=" {% url 'edit_fooditem' pk=item.id%}" style='color: unset;'><i class="fa fa-edit" aria-hidden="true"></i> </a>
+                                                &nbsp;
+                                                <a href="{% url 'delete_fooditem' pk=item.id%}" style='color: unset;' onclick='return confirm("Do you realy want to delete this product?")'><i class="fa fa-trash text-danger" aria-hidden="true"></i></a>
+                                                
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -44,7 +56,7 @@
                             <h5 class='text-center'> No food products found</h5>
                             <div class='text-center'>
                                 <button class='btn btn-secondary mr-3' onclick='history.back()'><i class='fa fa-angle-left' aria-hiden='true'></i>  Back</button>
-                                <a href='#' class='btn btn-success'><i class="fa fa-plus" aria-hidden="true"></i> Add food</a>
+                                <a href="{% url 'add_fooditem' %}" class='btn btn-success'><i class="fa fa-plus" aria-hidden="true"></i> Add food</a>
 
                             </div>
 

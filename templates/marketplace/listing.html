@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<!-- Main Section Start -->
+<div class="main-section">
+    <div class="page-section nopadding cs-nomargin" style="margin-top: 0px;padding-top: 60px;padding-bottom: 10px;margin-bottom: 0px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="row">
+                        <aside class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                            
+                        </aside>
+                        <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                            <div class="listing-sorting-holder">
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <h4>{{vendors.count}} Restaurant's found</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="listing simple">
+                                <ul>
+                                    {% for vendor in page_obj %}
+                                        <li>
+                                            <div class="img-holder">
+                                                <figure>
+                                                    {% if vendor.user_profile.profile_picture %}
+                                                        <a href="#"><img src="{{ vendor.user_profile.profile_picture.url }}" class="img-list wp-post-image" alt=""></a>
+                                                    {% else %}
+                                                        <a href="#"><img src="{% static 'images/default-profile.png' %}" class="img-list wp-post-image" alt=""></a>
+                                                    {% endif %}
+                                                </figure>
+                                                <span class="restaurant-status open"><em class="bookmarkRibbon"></em>Open</span>
+                                            </div>
+
+                                            <div class="text-holder">
+                                                <div class="list-rating">
+                                                    <div class="rating-star">
+                                                        <span class="rating-box" style="width: 100%;"></span>
+                                                    </div>
+                                                    <span class="reviews">(1)</span>
+                                                </div>
+                                                <div class="post-title">
+                                                    <h5>
+                                                        <a href="listing-detail.html">{{vendor.vendor_name}}</a>
+                                                    </h5>
+                                                </div>
+                                                <span class='text-muted'>Address: {{vendor.user_profile.address}}</span>
+
+                                                <span class="post-categories"><span>Type of food :
+                                                    {% for category in vendor.categories %}
+                                                        {{category}},
+                                                    {% endfor %}</span>
+                                            </div>
+
+                                            <div class="list-option">
+                                                <a href="{% url 'vendor_detail' vendor_slug=vendor.vendor_slug %}" class="btn btn-outline-danger text-uppercase">View Menu</a>
+                                            </div>
+                                    </li>
+                                    {% endfor %}
+                                   
+                                </ul>
+                            </div>
+                            {% comment %} pagination {% endcomment %}
+
+                            <nav aria-label="...">
+                            <div class="text-center">
+                                <ul class="pagination justify-content-center">
+                        
+                                        {% if page_obj.has_previous %}
+                                            <li class="page-item ">
+                                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" >Previous</a>
+                                            </li>
+                                            <li class="page-item ">
+                                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" >{{ page_obj.previous_page_number }}</a>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item disabled">
+                                                <a class="page-link" href="#" >Previous</a>
+                                            </li>
+                                        {% endif %}
+                        
+                                    <li class="page-item active">
+                                        <a class="page-link" href="#" style="background-color: white; border-color: red;">{{page_obj.number}}</a>
+                                    </li>
+                        
+                                        {% if page_obj.has_next %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+                                            </li>
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                                            </li>
+                                            
+                                            
+                                        {% else %}
+                                            <li class="page-item disabled">
+                                                <a class="page-link disabled" href="#">Next</a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                            </div>
+                        </nav>
+                        </div>
+                        <div class="section-sidebar col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                            <div class="message-box" style="background-color: #fa9918;">
+                                <strong>I'm not Listed!</strong><span>is your restaurant or
+                                    business not
+                                    listed on over site</span>
+                                <a href="{% url 'registerVendor' %}" class="request-btn">Add Your business!</a>
+                            </div>
+                        </div>
+
+                        
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main Section End -->
+
+    
+{% endblock content %}
+    

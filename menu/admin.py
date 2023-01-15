@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import FoodItem, Category
 
 class CategoryAdmin(admin.ModelAdmin):
-    prepopulated_fields = {'slug': ('category_name',)}
+    prepopulated_fields = {'slug': ('category_name','vendor')}
     list_display = ('category_name', 'vendor', 'updated_at',)
     search_fields = ('category_name', 'vendor__vendor_name',)
 
