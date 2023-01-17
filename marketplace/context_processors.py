@@ -13,3 +13,15 @@ def get_cart_counter(request):
         except:
             cart_count = 0 
     return dict(cart_count=cart_count)
+
+def get_cart_amount(request):
+    from functools import reduce
+    total = 0
+    if request.user.is_authenticated:
+        
+        cart_items = Cart.objects.filter(user=request.user)
+        for item in cart_items:
+            fooditem = FoodItem.objects.get(pk=item.fooditem.id)
+            total+= (fooditem.price * item.quantity) 
+
+    return dict(total=total)
