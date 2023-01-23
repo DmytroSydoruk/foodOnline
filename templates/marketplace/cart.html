@@ -80,7 +80,7 @@
                                 <div class="menu-itam-holder">
                                     <div>
                                         <ul>
-                                            <li style="list-style-type: none; font-weight: 600;">
+                                            <li class='p-3' style="list-style-type: none; font-weight: 600;">
                                                 Total
                                                 <span class="price float-right">
                                                     <span class="currency">$ </span>
@@ -88,6 +88,11 @@
                                                 </span>
                                             </li>
                                         </ul>
+                                        {% if cart_items %}
+                                        <div class="text-center p-3" id='confirm-order' style='display: block;'>
+                                            <a href="{% url 'confirm-order' %}" class='btn btn-danger' style='color:white;'> Confirm order</a>
+                                        </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>

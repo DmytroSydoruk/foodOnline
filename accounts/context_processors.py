@@ -1,5 +1,6 @@
 from vendor.models import Vendor
 from django.conf import settings
+from .models import UserProfile
 
 
 def get_vendor(request):

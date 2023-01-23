@@ -23,16 +23,17 @@
                             {% if fooditems %}
                             <a href="{% url 'add_fooditem' %}" class='btn btn-info float-right m-1'><i class="fa fa-plus" aria-hidden="true"></i> Add food</a>
                             <button class='btn btn-secondary float-right m-1' onclick='history.back()'><i class='fa fa-angle-left' aria-hiden='true'></i>  Back</button>
-                            <table class="table table-hover table-borderless">
+                            <table class="table table-hover  ">
                                 <tbody>
                                     {% for item in fooditems %}
                                         <tr>
                                             <td class='text-left'>{{forloop.counter}}</th>
                                             <td class='text-left'><img src='{{item.image.url}}' width='60'></td>
                                             <td class='text-left'>
-                                                <a href='#'><p class='mb-0 font-weight-bold'>{{ item }}</p></a>
+                                                <a href='{% url 'edit_fooditem' pk=item.id%}'><p class='mb-0 font-weight-bold'>{{ item }}</p></a>
                                                 <small class='text-muted'>{{ item.description }}</small>
                                             </td>
+                                            <td>$ {{item.price}}</td>
                                             <td>
                                                 {% if item.is_available %}
                                                     <span class="badge badge-success">Available</span>

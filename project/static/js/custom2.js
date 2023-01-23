@@ -1,5 +1,6 @@
 
 $(document).ready(function(){
+    // api for maps
     // let geocoder = new maptiler.Geocoder({
     //     input: 'id_address',
     //     key: 'sgRLtHO0dUL7548L8tiZ'
@@ -11,7 +12,7 @@ $(document).ready(function(){
     //     console.log(response.id);
     // });
 
-
+    // show block of custom reciver
     function DeliveryCredentials() {
         let checkBox = document.getElementById("chk_reciver");
         let credentials = document.getElementById("custom_reciver");
@@ -136,6 +137,7 @@ $(document).ready(function(){
         let qty = $(this).attr('data-qty')
         $('#'+the_id).html(qty)
     });
+
     // delete cart element if qty <= 0
     function removeCartItem(cartItemQty, cart_id){
         if(window.location.pathname == '/cart/'){
@@ -150,6 +152,7 @@ $(document).ready(function(){
         }
     }};
 
+
     function checkEmptyCart(){
         let cart_counter = document.getElementById('cart_counter').innerHTML
         if (cart_counter == 0){
@@ -157,7 +160,7 @@ $(document).ready(function(){
             document.getElementById('confirm-order').style.display = "none";
         }
 
-    }
+    };
 
     // apply cart amounts
     function applyCartAmount(total){
@@ -174,13 +177,17 @@ $(document).ready(function(){
         }
     }
 
+    // add opening hour
     $('.add_hour').on('click',function(e){
         e.preventDefault();
+        let url = document.getElementById('add_hour_url').value
+
         let day = document.getElementById('id_day').value
         let from_hour = document.getElementById('id_from_hour').value
         let to_hour = document.getElementById('id_to_hour').value
         let is_closed = document.getElementById('id_is_closed').checked
         let csrf = $('input[name=csrfmiddlewaretoken]').val()
+
         if (is_closed){
             is_closed = "True"
             condition = "day != ''"
@@ -188,17 +195,57 @@ $(document).ready(function(){
             is_closed = "False"
             condition = "day != '' && from_hour != '' && to_hour != ''"
         }
-        
-        
         if(eval(condition)){
-
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    'day': day,
+                    'from_hour': from_hour,
+                    'to_hour': to_hour,
+                    'is_closed': is_closed,
+                    'csrfmiddlewaretoken': csrf,
+                },
+                success: function(response){
+                    if(response.status == 'success'){
+                        if (response.is_closed){
+                            html = `<tr id='hour-${response.id}'><td><b>${response.day}</b><td><span class="badge badge-danger">Closed</span></td><td><a class="btn btn-danger remove_hour" data-url="/vendor/opening-hours/remove/${response.id}/" href='#'>Remove</a></td></tr>`
+                        }else{
+                            html = `<tr id='hour-${response.id}'><td><b>${response.day}</b><td>${response.from_hour} - ${response.to_hour}</td>{% endif %}<td><a class="btn btn-danger remove_hour" data-url="/vendor/opening-hours/remove/${response.id}/" href='#'>Remove</a></td></tr>`
+                        }
+                        $('.opening_hours').append(html)
+                        document.getElementById('opening_hours').reset()
+                    }else{
+                        swal({
+                            title: response.message,
+                            icon: "info",
+                          })
+                    }
+                }
+            })
         }else{
-            alert("Please fill all fields") 
+            swal({
+                title: "Error",
+                text: "Please fill all fields",
+                icon: "info",
+              })
         }
-        
-        // console.log(day, from_hour, to_hour, is_closed ,csrf)
     });
 
+    // remove opening hour
+    $(document).on('click','.remove_hour', function(e){
+        e.preventDefault();
+        const url = $(this).attr('data-url')
+        $.ajax({
+            type: 'GET',
+            url: url,
+            success: function(response){
+                if (response.status == 'success'){
+                    document.getElementById('hour-'+response.id).remove()
+                }
+            },
+        });
+    });
 
 
 });

@@ -185,7 +185,10 @@ def myAccount(request):
 @login_required(login_url='login')
 @user_passes_test(chech_role_customer)
 def custDashboard(request):
-    return render(request, 'accounts/custDashboard.html')
+    context = {
+        'profile': UserProfile.objects.get(user=request.user),
+    }
+    return render(request, 'accounts/custDashboard.html',context)
 
 
 @login_required(login_url='login')

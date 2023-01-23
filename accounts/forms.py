@@ -21,6 +21,12 @@ class UserForm(forms.ModelForm):
                 'Password does not match confirm password')
 
 
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'username', 'phone_number']
+
+
 class UserProfileForm(forms.ModelForm):
     address = forms.CharField(widget=forms.TextInput(
         attrs={'placeholder': 'Start typing...', 'required': 'required'}))
