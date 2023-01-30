@@ -45,3 +45,10 @@ def send_notification(email_subject: str, email_template: str, context: dict):
     message = render_to_string(template, context)
     send_mail(email_subject, message, from_email,
               [to_email], fail_silently=False)
+
+def send_notification_to_vendors(email_subject: str, email_template: str, context: dict):
+    template: str = 'accounts/emails/' + email_template
+    from_email = settings.DEFAULT_FROM_EMAIL
+    to_email= context['vendors_emails']
+    message = render_to_string(template, context)
+    send_mail(email_subject, message, from_email,to_email, fail_silently=False)

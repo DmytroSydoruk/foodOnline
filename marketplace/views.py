@@ -4,13 +4,14 @@ from menu.models import Category, FoodItem
 from django.core.paginator import Paginator
 from django.db.models import Prefetch
 from django.http import HttpResponse, JsonResponse
-from .models import Cart, Order
+from .models import Cart
 from .context_processors import get_cart_counter, get_cart_amount
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from accounts.models import User, UserProfile
 from vendor.models import OpeningHour
 from datetime import date, datetime
+from orders.forms import OrderForm
 
 
 def marketplace(request):
@@ -179,26 +180,43 @@ def delete_cart(request, cart_id):
 def search(request):
     if request.method == "POST":
         wanted = request.POST['wanted']
-        vendor = Vendor.objects.get(vendor_name__contains=wanted)
-        return redirect('vendor_detail', vendor_slug=vendor.vendor_slug)
+        try:
+            vendor = Vendor.objects.get(vendor_name__contains=wanted)
+            return redirect('vendor_detail', vendor_slug=vendor.vendor_slug)
+        except:
+            messages.info(request,'There are no restaurants with this name')
+            return redirect('home')
+           
     else:
         return render(request, 'home.html')
 
 
-def confirm_order(request):
-    cart_items: Cart = Cart.objects.filter(
-        user=request.user).order_by('created_at')
-    for item in cart_items:
-        item.price = item.fooditem.price * item.quantity
+def search_by_city(request):
+    pass
 
-    account = {
-        'full_name': str(request.user.first_name+' '+request.user.last_name),
-        'phone_number': str(request.user.phone_number),
-        'address': UserProfile.objects.get(user=request.user).full_address(),
+
+@login_required(login_url='login')
+def checkout(request):
+    cart_items = Cart.objects.filter(user=request.user)
+
+    user_profile = UserProfile.objects.get(user=request.user)
+
+    default_data = {
+        'first_name': request.user.first_name,
+        'last_name':  request.user.last_name,
+        'phone': request.user.phone_number,
+        'email': request.user.email,
+        'address': user_profile.address,
+        'country': user_profile.country,
+        'state': user_profile.state,
+        'city': user_profile.city,
+        'pin_code': user_profile.post_code,
     }
 
+    form = OrderForm(initial=default_data)
+    
     context = {
         'cart_items': cart_items,
-        'account': account,
+        'form': form,
     }
-    return render(request, 'marketplace/order.html', context)
+    return render(request, 'marketplace/checkout.html', context)

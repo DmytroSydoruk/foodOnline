@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from . import views
-from marketplace.views import cart, search, confirm_order
+from marketplace.views import cart, search, checkout, search_by_city
 
 from django.conf.urls.static import static
 from django.conf import settings
@@ -11,12 +11,15 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('', include('accounts.urls')),
     path('marketplace/', include('marketplace.urls')),
-    # order
+    # cart
     path('cart/', cart, name='cart'),
-    path('confirm-order/', confirm_order, name='confirm-order'),
-    # path('order/', order, name='order'),
     # search
     path('search/', search, name='search'),
+    path('search-by-city/<str:city>', search_by_city, name='search_by_city'),
+    # check out
+    path('checkout/', checkout, name='checkout'),
+    
+    path('order/', include('orders.urls')),
 
 
 ]

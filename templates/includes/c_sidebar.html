@@ -6,7 +6,7 @@
                     <i class="icon-dashboard3"></i>Dashboard
                 </a>
             </li>
-            <li class="{% if '/customer/orders/' == request.path %} active {% endif %}">
+            <li class="{% if '/customer/orders/' == request.path or '/customer/order-details/' in request.path %} active {% endif %}">
                 <a href="{% url 'customer_orders' %}">
                     <i class="icon-add_shopping_cart"></i>My Orders
                 </a>

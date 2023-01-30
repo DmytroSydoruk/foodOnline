@@ -6,14 +6,14 @@
           <div class="main-header">
             <div class="container-fluid">
               <div class="row">
-                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style='display:inline;'>
                   <div class="logo">
-                    <figure>
+                    <figure> 
                       <a href="{% url 'home' %}" class="light-logo">
                         <img
                           src="{% static 'logo/foodOnlineLogo.png'%}"
                           alt="FoodBakery"
-                          width="250px"
+                          width="200px"
                         />
                       </a>
                     </figure>
@@ -23,24 +23,23 @@
                     <ul>
                       <li class="location-has-children choose-location">
                         <form action="#">
-                          <input
-                            type="text"
-                            value=""
-                            name="location"
-                            placeholder="Enter your delivery location"
-                            autocomplete="off"
-                          />
-                          <span
-                            id="foodbakery_radius_location_open"
-                            class="foodbakery-radius-location"
-                            ><i class="icon-target5"></i
-                          ></span>
+                          <input type="text" value="" list='location' placeholder="Enter wanted city"
+                          style='border-radius: 10px;'>
+                          <datalist id='location'>
+                            {% for vendor in vendors %}
+                              <option value="{{vendor.user_profile.city}}"></option>
+                            {% endfor %}
+                          </datalist>
+                          <span class="foodbakery-radius-location btn btn-danger">
+                            <i class="icon-target5"></i>
+                        </span>
+                          
                         </form>
                       </li>
                     </ul>
                   </div>
                 </div>
-                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <div class="login-option">
                     {% if user.is_authenticated%}
                     <a href="{% url 'cart' %}">

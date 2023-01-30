@@ -5,11 +5,14 @@ from accounts import views as AccountViews
 
 urlpatterns = [
     path('', AccountViews.vendorDashboard, name='vendor'),
+    # sidebar
     path('profile/', views.vprofile, name='vprofile'),
     path('menu-builder/', views.menu_builder, name='menu_builder'),
+    path('change-password/', views.change_password, name='ven_change_password'),
+
+     # category crud
     path('menu-builder/category/<int:pk>/',
          views.food_items_by_category, name='food_items_by_category'),
-    # category crud
     path('menu-builder/category/add/', views.add_category, name='add_category'),
     path('menu-builder/category/edit/<int:pk>',
          views.edit_category, name='edit_category'),

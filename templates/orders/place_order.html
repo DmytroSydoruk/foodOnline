@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% include 'includes/alerts.html' %}
+
+<div class="main-section pt-5">
+    <div class="page-section">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <div class="tabs-holder horizontal">
+                        <ul class="stickynav-tabs nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#home"><i class="icon- icon-room_service"></i>Review Your Credentials</a></li>
+                            
+                        </ul>
+                        <div class="tab-content">
+                            
+                            <div id="home" class="tab-pane in active">
+                                <div class="menu-itam-holder p-5">
+                                    
+                                        <h4>Account credentials</h4>
+                                        <div class='billing-address'>
+                                            <div><b>{{order.name}}</b></div>
+                                            <div>{{order.address}}</div>
+                                            <div>{{order.city}} - {{order.pin_code}}</div>
+
+                                            <div>{{order.state}}, {{order.country}}</div>
+                                            <div>Phone number : {{order.phone}}</div>
+                                            <div>Email address : {{order.email}}</div>
+                                            <div>Payment method : Cash</div>
+                                            <div>
+                                                <br>
+                                                <a href="{% url 'checkout' %}" class='btn btn-outline-danger'> Edit</a>
+                                            </div>
+                                        </div>
+                                </div> 
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                {% comment %} orders section {% endcomment %}
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <div class="tabs-holder horizontal">
+                        <ul class="stickynav-tabs nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#home"><i class="fa fa-shopping-cart text-danger"></i>Your order</a></li>
+                            
+                        </ul>
+                        <div class="tab-content">
+                            <div id="home" class="tab-pane in active">
+                                <div class="menu-itam-holder">
+                                    <div id="menu-item-list-6272" class="menu-itam-list">
+                                        <ul>
+                                            {% for item in cart_items %}
+                                                <li id="cart-item-{{item.id}}">
+                                                    <div class="image-holder"> <a href="{{item.fooditem.image.url}}"><img src="{{item.fooditem.image.url}}" alt=""></a></div>
+                                                    <div class="text-holder">
+                                                        <a href="{% url 'vendor_detail' item.fooditem.vendor.vendor_slug %}" class="badge badge-danger" style="width: auto;">{{item.fooditem.vendor}}</a>
+                                                        <h6>{{item.fooditem}}</h6>
+                                                        <span>{{item.fooditem.description|truncatewords:6}}</span>
+                                                    </div>
+                                                    <div class='quantity' style="display: inline-block; position:absolute; top: 50%; transform: translateY(-50%); margin-top: -10px;">
+                                                        <lable>x {{item.quantity}}</lable>
+                                                    </div>
+                                                    <div class="price-holder">
+                                                        <span id="price-per-one-{{item.id}}">$ {{item.fooditem.price}}</span>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                                <li class='p-3' style="list-style-type: none; font-weight: 600;">
+                                                    Total
+                                                    <span class="price float-right">
+                                                        <span class="currency">$ </span>
+                                                        <span id="total">{{total}}</span>
+                                                    </span>
+                                                    <div class="text-center p-3" style='display: block;'>
+                                                        
+                                                            <a href="{% url 'confirm_order1' order.order_number %}" class='btn btn-danger' style='color:white;'>Confirm order</a>
+                                                    </div>
+                                                    
+                                                </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

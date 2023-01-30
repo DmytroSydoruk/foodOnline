@@ -7,4 +7,5 @@ urlpatterns = [
     path('profile/', views.cprofile, name='c_profile'),
     path('change-password/', views.cust_change_password , name='cust_change_password'),
     path('orders/', views.customer_orders, name='customer_orders'),
+    path('order-details/<int:order_number>/', views.order_detail, name='cust_order_detail')
 ]

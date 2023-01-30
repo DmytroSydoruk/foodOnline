@@ -20,13 +20,17 @@ class Vendor(models.Model):
         today = date.today().isoweekday()
         current_day_hours = OpeningHour.objects.filter(vendor=self, day=today)
         now = datetime.now().strftime('%H:%M:%S')
+        
+        is_open: bool =None
         for item in current_day_hours:
             open = str(datetime.strptime(item.from_hour,'%H:%M').time())
             close = str(datetime.strptime(item.to_hour,'%H:%M').time())
             if now > open and now < close:
                 return True
             else:
-                return False
+                is_open = False
+                
+        return is_open
 
 
     def __str__(self) -> str:

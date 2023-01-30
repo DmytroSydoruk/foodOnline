@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from .forms import VendorForm ,OpeningHourForm
 from accounts.forms import UserProfileForm
-from accounts.models import UserProfile
+from accounts.models import UserProfile,User
 from .models import Vendor, OpeningHour
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -11,6 +11,7 @@ from menu.forms import CategoryForm, FoodItemForm
 from django.template.defaultfilters import slugify
 from django.http import JsonResponse
 from django.db.utils import IntegrityError
+from django.contrib.auth import update_session_auth_hash
 
 
 def get_vendor(request) -> Vendor:
@@ -61,6 +62,29 @@ def menu_builder(request):
         'categories': categories,
     }
     return render(request, 'vendor/menu_builder.html', context)
+
+
+# works 2:30 23.01.2023
+def change_password(request):
+    if request.method == 'POST':
+        password = request.POST['password']
+        confirm_password = request.POST['confirm_password']
+        if password == confirm_password:
+            user = User.objects.get(pk=request.user.pk)
+            user.set_password(password)
+            user.save()
+            update_session_auth_hash(request,user)
+            messages.success(request, 'Password changed successfully!')
+            return redirect('ven_change_password')
+
+        else:
+            messages.error(request, 'Passwords does not match')
+            return redirect('ven_change_password')
+    else:
+        context = {
+            'profile': UserProfile.objects.get(user=request.user)
+        }
+        return render(request, 'vendor/change_password.html', context)
 
 
 @login_required(login_url='login')

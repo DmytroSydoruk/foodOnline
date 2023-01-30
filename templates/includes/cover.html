@@ -31,9 +31,9 @@
                             <span class="restaurant-title">{{ vendor.vendor_name}}</span>
                             <div class="text">
                                 
-                                {% if vendor.user_profile.address %}
+                                {% if vendor.user_profile.full_address %}
                                     <i class="icon-location"></i>
-                                    <p>{{ vendor.user_profile.address }}</p>
+                                    <p>{{ vendor.user_profile.full_address }}</p>
                                 {% else %}  
                                 {% endif %}
 

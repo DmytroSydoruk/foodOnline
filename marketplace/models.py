@@ -12,6 +12,3 @@ class Cart(models.Model):
 
     def __unicode__(self):
         return self.user
-
-class Order(models.Model):
-    fooitem = models.ForeignKey(FoodItem, on_delete=models.CASCADE)

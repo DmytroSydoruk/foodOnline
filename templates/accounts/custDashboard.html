@@ -16,27 +16,31 @@
                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                     <div class="user-dashboard loader-holder">
                         <div class="user-holder">
-                            
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="row">
-                                    <div class="element-title has-border right-filters-row">
-                                        <h5>Recent Orders</h5>
-                                        <div class="right-filters row pull-right">
-                                            <div class="col-lg-6 col-md-6 col-xs-6">
-                                                <div class="input-field">
-                                                    <select class="chosen-select-no-single">
-                                                        <option selected="selected" value="">Select Orders Status</option>
-                                                        <option value="Processing">Processing</option>
-                                                        <option value="Cancelled">Cancelled</option>
-                                                        <option value="Completed">Completed</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            
+                            <h5 class='text-uppercase'> Overview </h5>
+                          
+                            <div class='row'>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class='card'>
+                                        <div class='card-header'>
+                                            Total Orders
+                                        </div>
+                                        <div class='card-body text-center'>
+                                            <a href="#"><h5 class='card-title'>{{orders.count}}</h5></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                                    <div class='card'>
+                                        <div class='card-header'>
+                                            Logged in as : {{user.email}}
+                                        </div>
+                                        <div class='card-body text-center'>
+                                            <a href="{% url 'c_profile' %}"><h5 class='card-title'><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit profile</h5></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            </br>
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="user-orders-list">
@@ -46,38 +50,31 @@
                                                     <div>Order id</div>
                                                     <div>Date</div>
                                                     <div>Total Price</div>
-                                                    <div>Charges</div>
-                                                    <div>Received</div>
+                                                    
                                                     <div>Status</div>
                                                 </li>
+
+                                                {% for order in view_orders %}
                                                 <li class="order-heading-titles">
-                                                    <div><a href="#" data-toggle="modal" data-target="#order-det-22606">order-22606</a></div>
-                                                    <div>Apr 9,2020</div>
-                                                    <div>£ 38.99</div>
-                                                    <div>£ 3.90</div>
-                                                    <div>£ 35.09</div>
-                                                    <div><span class="order-status" style="background-color: #047a06;">Completed</span></div>
+                                                    <div><a href="{% url 'cust_order_detail' order.order_number %}">order - {{order.order_number}}</a></div>
+                                                    <div>{{order.created_at}}</div>
+                                                    <div>$ {{order.total}}</div>
+
+                                                    {% if order.status == "New" %}
+                                                        <div><span class='badge badge-primary' style='color:white;'>{{order.status}}</span></div>
+                                                    {% elif order.status == "Accepted" %}
+                                                        <div><span class='badge badge-warning'>{{order.status}}</span></div>
+                                                    {% elif order.status == "Completed" %}
+                                                        <div><span class='badge badge-success' style='color:white;'>{{order.status}}</span></div>
+                                                    {% else %}
+                                                        <div><span class='badge badge-danger' style='color:white;'>{{order.status}}</span></div>
+                                                    {% endif %}
                                                 </li>
-                                                
-                                                
-                                                
-                                                <li class="order-heading-titles">
-                                                    <div><a href="#" data-toggle="modal" data-target="#order-det-22606">order-22583</a></div>
-                                                    <div>Apr 9,2020</div>
-                                                    <div>£ 26.22</div>
-                                                    <div>£ 2.62</div>
-                                                    <div>£ 23.60</div>
-                                                    <div><span class="order-status" style="background-color: #1e73be;">Processing</span></div>
-                                                </li>
-                                                <li class="order-heading-titles">
-                                                    <div><a href="#" data-toggle="modal" data-target="#order-det-22606">order-22493</a></div>
-                                                    <div>Apr 2,2020</div>
-                                                    <div>£ 28.24</div>
-                                                    <div>£ 2.82</div>
-                                                    <div>£ 25.42</div>
-                                                    <div><span class="order-status" style="background-color: #047a06;">Completed</span></div>
-                                                </li>
+                                                {% endfor %}
                                             </ul>
+                                            <div class='text-center'>
+                                                <a href="{% url 'customer_orders' %}">View More</a>
+                                            </div>
 
                                         </div>												
                                     </div>

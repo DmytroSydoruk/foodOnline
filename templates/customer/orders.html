@@ -19,15 +19,16 @@
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="row">
                                     <div class="element-title has-border right-filters-row">
-                                        <h5>Recent Orders</h5>
+                                        <h5>Your Orders</h5>
                                         <div class="right-filters row pull-right">
                                             <div class="col-lg-6 col-md-6 col-xs-6">
                                                 <div class="input-field">
                                                     <select class="chosen-select-no-single">
-                                                        <option selected="selected" value="">Select Orders Status</option>
-                                                        <option value="Processing">Processing</option>
-                                                        <option value="Cancelled">Cancelled</option>
+                                                        <option selected="selected" value="All">All orders</option>
+                                                        <option value="New">New</option>
+                                                        <option value="Accepted">Accepted</option>
                                                         <option value="Completed">Completed</option>
+                                                        <option value="Cancelled">Cancelled</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -39,38 +40,36 @@
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="user-orders-list">
-                                        
-                                        <table class="table table-borderless" >
+                                        <ul class="table-generic">
+                                            <li class="order-heading-titles">
+                                                <div>Order id</div>
+                                                <div>Date</div>
+                                                <div>Total Price</div>
+                                                
+                                                <div>Status</div>
+                                                <div>More</div>
+                                            </li>
+
                                             {% for order in orders %}
-                                                <tr>
-                                                    <td style="line-height: normal;">
-                                                        <a href="#">Order-{{order.id}}</a></br>
-                                                        {% if order.status == 'Processing' %}
-                                                            <span class="badge badge-secondary">{{order.status}}</span>
-                                                        {% elif order.status == 'Confirmed' %}
-                                                            <span class="badge badge-primary">{{order.status}}</span>
-                                                        {% elif order.status == 'Canceled' %}
-                                                            <span class="badge badge-danger">{{order.status}}</span>
-                                                        {% elif order.status == 'Completed' %}
-                                                            <span class="badge badge-success">{{order.status}}</span>
-                                                        {% endif %}
-                                                    </td>
-                                                    <td >
-                                                        <img src="{{order.fooditem.image.url}}" width="60">
-                                                    </td>
-                                                    <td style="line-height: normal;">
-                                                        <span class="badge badge-danger">
-                                                            {{order.vendor}}
-                                                        </span></br>
-                                                        <span >{{order.fooditem}}</span></br>
-                                                        <span>$ {{order.fooditem.price}}</span>
-                                                    </td>
-                                                    <td>x {{order.quantity}}</td>
-                                                    <td>$ {{order.price}}</td>
-                                                </tr>
+                                            <li class="order-heading-titles">
+                                                <div><a href="{% url 'cust_order_detail' order.order_number %}">order - {{order.order_number}}</a></div>
+                                                <div>{{order.created_at}}</div>
+                                                <div>$ {{order.total}}</div>
+
+                                                {% if order.status == "New" %}
+                                                    <div><span class='badge badge-primary' style='color:white;'>{{order.status}}</span></div>
+                                                {% elif order.status == "Accepted" %}
+                                                    <div><span class='badge badge-warning'>{{order.status}}</span></div>
+                                                {% elif order.status == "Completed" %}
+                                                    <div><span class='badge badge-success' style='color:white;'>{{order.status}}</span></div>
+                                                {% else %}
+                                                    <div><span class='badge badge-danger' style='color:white;'>{{order.status}}</span></div>
+                                                {% endif %}
+                                                    <div><a href="{% url 'cust_order_detail' order.order_number %}" class="btn btn-outline-danger">Details</a></td></div>
+                                            </li>
                                             {% endfor %}
-                                            
-                                          </table>												
+                                        </ul>
+                                        											
                                     </div>
                                 </div>
                             </div>
