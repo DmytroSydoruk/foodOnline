@@ -13,6 +13,14 @@ from django.contrib import messages
 login_required(login_url='login')
 def place_order(request):
     total = get_cart_amount(request)['total']
+    vendors_ids = []
+
+    cart_items = Cart.objects.filter(user=request.user)
+
+    for item in cart_items:
+        if item.fooditem.vendor.id not in vendors_ids:
+            vendors_ids.append(item.fooditem.vendor.id)
+
 
     if request.method == "POST":
         form = OrderForm(request.POST)
@@ -27,12 +35,13 @@ def place_order(request):
             order.state = form.cleaned_data['state']
             order.city = form.cleaned_data['city']
             order. pin_code = form.cleaned_data['pin_code']
-
+            
             order.user = request.user
             order.total = total
 
             order.save()
             order.order_number = generate_order_number(order.id)
+            order.vendors.add(*vendors_ids)
             order.save()
 
             context = {
@@ -56,36 +65,47 @@ def confirm_order(request, order_number):
     cart_items = Cart.objects.filter(user=request.user)
     for item in cart_items:
         ordered_food: OrderedFood = OrderedFood()
-        ordered_food.user = request.user    
+        ordered_food.user = request.user
         ordered_food.order = order
         ordered_food.fooditem = item.fooditem
         ordered_food.quantity = item.quantity
         ordered_food.price = item.fooditem.price
         ordered_food.amount = item.fooditem.price * item.quantity
+        ordered_food.status = "New"
         ordered_food.save()
 
     # send email to customer
-    email_subject = "Thank you for your order!"
-    email_template = 'order_confirmation_email.html'
-    email_template = 'order_confirmation_email.html'
-    context = {
-        'user': order,
-        'order': order,
-    }
-    send_notification(email_subject,email_template,context)
-    # send email to vendors
-    email_subject = 'You have new order'
-    email_template = 'new_order_received.html'
-    vendors_email = []
-    for item in cart_items:
-        if item.fooditem.vendor.user.email not in vendors_email:
-            vendors_email.append(item.fooditem.vendor.user.email)
+    try:
+        email_subject = "Thank you for your order!"
+        email_template = 'order_confirmation_email.html'
+        email_template = 'order_confirmation_email.html'
+        context = {
+            'user': order,
+            'order': order,
+        }
+        send_notification(email_subject,email_template,context)
+    except Exception as e:
+        print(f'Exception: send customer email error {e}')
 
-    context = {
-        'vendors_emails': vendors_email,
-        'order': order,
-    }
-    send_notification_to_vendors(email_subject,email_template,context)
+    try:
+        email_subject = 'You have new order'
+        email_template = 'new_order_received.html'
+        vendors_email = []
+        for item in cart_items:
+            if item.fooditem.vendor.user.email not in vendors_email:
+                vendors_email.append(item.fooditem.vendor.user.email)
+
+        context = {
+            'vendors_emails': vendors_email,
+            'order': order,
+        }
+        send_notification_to_vendors(email_subject,email_template,context)
+
+    except Exception as e:
+        print(f'Exception: send vendors email error {e}')
+        
+    # send email to vendors
+    
 
     # Clear cart
     cart_items.delete()

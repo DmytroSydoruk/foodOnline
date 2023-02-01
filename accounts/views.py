@@ -5,7 +5,7 @@ from vendor.forms import VendorForm
 from .forms import UserForm
 from .models import User, UserProfile
 from django.contrib import messages, auth
-from .utils import detectUser, send_verification_email
+from .utils import detectUser, send_verification_email, for_this_month
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.utils.http import urlsafe_base64_decode
@@ -13,6 +13,7 @@ from django.contrib.auth.tokens import default_token_generator
 from vendor.models import Vendor
 from django.template.defaultfilters import slugify
 from orders.models import Order
+from django.db.models import Sum
 
 
 # custom decorator restrict vendor from accessing customer page
@@ -201,7 +202,26 @@ def custDashboard(request):
 @login_required(login_url='login')
 @user_passes_test(chech_role_vendor)
 def vendorDashboard(request):
-    return render(request, 'accounts/vendorDashboard.html')
+    vendor = Vendor.objects.get(user=request.user)
+
+    _completed_orders = Order.objects.filter(vendors__in=[vendor.id], status="Completed")
+
+    total_revenue:float = 0
+    for order in _completed_orders:
+        total_revenue += order.total
+
+    new_orders = Order.objects.filter(vendors__in=[vendor.id], is_ordered=True, status="New").order_by('-created_at')
+    total_orders = Order.objects.filter(vendors__in=[vendor.id], is_ordered=True).count
+
+    this_month_total = Order.objects.filter(created_at__year=for_this_month()['year'], created_at__month=for_this_month()['month'], status="Completed").aggregate(Sum('total'))
+
+    context = {
+        'new_orders': new_orders,
+        'total_revenue': total_revenue,
+        'this_month_total': 0 if this_month_total['total__sum'] == None else this_month_total['total__sum'],
+        'total_orders': total_orders,
+    }
+    return render(request, 'accounts/vendorDashboard.html',context)
 
 
 def forgot_password(request):

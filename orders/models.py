@@ -1,6 +1,7 @@
 from django.db import models
 from accounts.models import User
 from menu.models import FoodItem
+from vendor.models import Vendor
 
 # class Payment(models.Model):
 
@@ -31,6 +32,8 @@ class Order(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     # payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null=True)
+    vendors = models.ManyToManyField(Vendor, blank=True)
+    total_data = models.JSONField(blank=True, null=True)
     order_number = models.CharField(max_length=20)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -52,11 +55,19 @@ class Order(models.Model):
     def name(self):
         return f'{self.first_name} {self.last_name}'
 
+    def restaurants(self):
+        return ', '.join([str(i) for i in self.vendors.all()])
+
     def __str__(self):
         return self.order_number
 
 
 class OrderedFood(models.Model):
+    STATUS = (
+        ('New', 'New'),
+        ('Accepted', 'Accepted'),
+        ('Cancelled', 'Cancelled'),
+    )
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     # payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null=True)
@@ -64,6 +75,7 @@ class OrderedFood(models.Model):
     quantity = models.IntegerField()
     price = models.FloatField()
     amount = models.FloatField()
+    status = models.CharField(choices=STATUS,blank=True, null=True, max_length=10)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

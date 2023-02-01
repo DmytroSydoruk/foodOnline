@@ -6,6 +6,7 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage, send_mail
 from django.conf import settings
+from datetime import datetime
 
 
 def detectUser(user: User):
@@ -19,6 +20,12 @@ def detectUser(user: User):
         redirectUrl = '/admin'
         return redirectUrl
 
+def for_this_month() -> dict:
+    today = datetime.now()
+    return dict(year=today.year, month=today.month)
+
+
+# fix DRY 
 
 def send_verification_email(request, user: User, email_subject: str, email_template: str) -> None:
     """Send email to specified user. Args are not optional"""

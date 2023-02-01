@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path
 from . import views
 from accounts import views as AccountViews
 
@@ -8,9 +8,20 @@ urlpatterns = [
     # sidebar
     path('profile/', views.vprofile, name='vprofile'),
     path('menu-builder/', views.menu_builder, name='menu_builder'),
+    path('orders/', views.orders, name='vendor_orders'),
+    path('order-detail/<int:order_number>',
+         views.order_detail, name='vendor_order_detail'),
     path('change-password/', views.change_password, name='ven_change_password'),
 
-     # category crud
+    # order features
+    path('accept-ordered-food/',
+         views.accept_ordered_food, name='accept_ordered_food'),
+    path('decline-ordered-food/',
+         views.decline_ordered_food, name='decline_ordered_food'),
+
+
+
+    # category crud
     path('menu-builder/category/<int:pk>/',
          views.food_items_by_category, name='food_items_by_category'),
     path('menu-builder/category/add/', views.add_category, name='add_category'),

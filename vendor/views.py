@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
-from .forms import VendorForm ,OpeningHourForm
+from .forms import VendorForm, OpeningHourForm
 from accounts.forms import UserProfileForm
-from accounts.models import UserProfile,User
+from accounts.models import UserProfile, User
 from .models import Vendor, OpeningHour
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -12,15 +12,21 @@ from django.template.defaultfilters import slugify
 from django.http import JsonResponse
 from django.db.utils import IntegrityError
 from django.contrib.auth import update_session_auth_hash
+from orders.models import Order, OrderedFood
+from orders.forms import OrderChangeStatus
+from django.db.models import Sum
+from django.http import JsonResponse
 
 
 def get_vendor(request) -> Vendor:
     return Vendor.objects.get(user=request.user)
 
+
 def custom_slugify(*args: str):
     """Make slug based on args"""
     from functools import reduce
-    return  reduce(lambda a, b: str(a) + "-" + str(b), args)
+    return reduce(lambda a, b: str(a) + "-" + str(b), args)
+
 
 @login_required(login_url='login')
 @user_passes_test(chech_role_vendor)
@@ -73,7 +79,7 @@ def change_password(request):
             user = User.objects.get(pk=request.user.pk)
             user.set_password(password)
             user.save()
-            update_session_auth_hash(request,user)
+            update_session_auth_hash(request, user)
             messages.success(request, 'Password changed successfully!')
             return redirect('ven_change_password')
 
@@ -108,7 +114,8 @@ def add_category(request):
         if form.is_valid():
             category: CategoryForm = form.save(commit=False)
             category.vendor = get_vendor(request)
-            category.slug = custom_slugify(form.cleaned_data['category_name'],get_vendor(request))
+            category.slug = custom_slugify(
+                form.cleaned_data['category_name'], get_vendor(request))
             form.save()
             messages.success(request, 'Successfully added!')
             return redirect('menu_builder')
@@ -131,7 +138,8 @@ def edit_category(request, pk):
         if form.is_valid():
             category: CategoryForm = form.save(commit=False)
             category.vendor = get_vendor(request)
-            category.slug = custom_slugify(form.cleaned_data['category_name'],get_vendor(request))
+            category.slug = custom_slugify(
+                form.cleaned_data['category_name'], get_vendor(request))
             form.save()
             messages.success(request, 'Changes has been applied')
             return redirect('menu_builder')
@@ -166,20 +174,21 @@ def add_fooditem(request):
             title = form.cleaned_data['food_title']
             item: FoodItemForm = form.save(commit=False)
             item.vendor = get_vendor(request)
-            item.slug = custom_slugify(title,get_vendor(request))
+            item.slug = custom_slugify(title, get_vendor(request))
             form.save()
-            messages.success(request,f'Product {title} added successfully')
+            messages.success(request, f'Product {title} added successfully')
             return redirect('food_items_by_category', item.category.id)
-        else: 
+        else:
             print(form.errors)
     else:
         form = FoodItemForm()
-        form.fields['category'].queryset = Category.objects.filter(vendor=get_vendor(request))
+        form.fields['category'].queryset = Category.objects.filter(
+            vendor=get_vendor(request))
 
     context = {
         'form': form,
     }
-    return render(request,'vendor/add_fooditem.html', context)
+    return render(request, 'vendor/add_fooditem.html', context)
 
 
 @login_required(login_url='login')
@@ -187,18 +196,21 @@ def add_fooditem(request):
 def edit_fooditem(request, pk):
     item = get_object_or_404(FoodItem, pk=pk)
     if request.method == 'POST':
-        form: FoodItemForm = FoodItemForm(request.POST, request.FILES, instance=item) 
+        form: FoodItemForm = FoodItemForm(
+            request.POST, request.FILES, instance=item)
         if form.is_valid():
             item: FoodItemForm = form.save(commit=False)
             item.vendor = get_vendor(request)
-            item.slug = custom_slugify(form.cleaned_data['food_title'],get_vendor(request))
+            item.slug = custom_slugify(
+                form.cleaned_data['food_title'], get_vendor(request))
             cat_id = item.category.id
             item.save()
             messages.success(request, 'Changes has been applied')
             return redirect('food_items_by_category', pk=cat_id)
     else:
         form = FoodItemForm(instance=item)
-        form.fields['category'].queryset = Category.objects.filter(vendor=get_vendor(request))
+        form.fields['category'].queryset = Category.objects.filter(
+            vendor=get_vendor(request))
 
     context = {
         'form': form,
@@ -214,7 +226,7 @@ def delete_fooditem(request, pk):
     item_name = item.food_title
     item.delete()
     messages.success(request, f'Product {item_name} was deleted')
-    return redirect('food_items_by_category', item.category.id) 
+    return redirect('food_items_by_category', item.category.id)
 
 
 def opening_hours(request):
@@ -222,7 +234,7 @@ def opening_hours(request):
     form = OpeningHourForm()
     context = {
         'form': OpeningHourForm(),
-        'opening_hours':opening_hours,
+        'opening_hours': opening_hours,
     }
     return render(request, 'vendor/opening_hours.html', context)
 
@@ -241,7 +253,7 @@ def add_opening_hours(request):
                     from_hour=from_hour,
                     to_hour=to_hour,
                     is_closed=is_closed
-                   )
+                )
                 if hour:
                     day = OpeningHour.objects.get(id=hour.id)
                     if day.is_closed:
@@ -254,7 +266,7 @@ def add_opening_hours(request):
                     else:
 
                         response = {
-                            'status':'success',
+                            'status': 'success',
                             'id': hour.id,
                             'day': day.get_day_display(),
                             'from_hour': hour.from_hour,
@@ -263,12 +275,13 @@ def add_opening_hours(request):
                 return JsonResponse(response)
             except IntegrityError:
                 response = {
-                    'status':'failed',
-                    'message':from_hour+'-'+to_hour+' already exists for this day',
+                    'status': 'failed',
+                    'message': from_hour+'-'+to_hour+' already exists for this day',
                 }
                 return JsonResponse(response)
         else:
             return HttpResponse('Invalid request')
+
 
 def remove_opening_hours(request, pk: int = None):
     if request.user.is_authenticated:
@@ -278,6 +291,85 @@ def remove_opening_hours(request, pk: int = None):
             response = {
                 'status': 'success',
                 'id': pk,
-                }
+            }
             return JsonResponse(response)
+
+
+def orders(request):
+    vendor = Vendor.objects.get(user=request.user)
+    orders = Order.objects.filter(
+        vendors__in=[vendor.id]).order_by('-created_at')
+    for order in orders:
+        order.amount_for_vendor = OrderedFood.objects.filter(
+            order=order, fooditem__vendor=vendor).aggregate(Sum('amount'))['amount__sum']
+
+    context = {
+        'orders': orders,
+    }
+    return render(request, 'vendor/orders.html', context)
+
+
+def order_detail(request, order_number):
+    order = Order.objects.get(order_number=order_number)
+    vendor = Vendor.objects.get(user=request.user)
+    ordered_products = OrderedFood.objects.filter(
+        order=order, fooditem__vendor=vendor)
+    amount_due = OrderedFood.objects.filter(
+        order=order, fooditem__vendor=vendor).aggregate(Sum('amount'))
+    form = OrderChangeStatus(instance=order)
+    context = {
+        'order': order,
+        'ordered_products': ordered_products,
+        'amount_due': amount_due['amount__sum'],
+        'form': form,
+    }
+    return render(request, 'vendor/vendor_order_detail.html', context)
+
+
+def accept_ordered_food(request):
+    if request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            ordered_food_id = request.GET['ordered_food_id']
+            try:
+                fooditem: OrderedFood = OrderedFood.objects.get(id=ordered_food_id)
+                fooditem.status = 'Accepted'
+                fooditem.save()
+                return JsonResponse({
+                    'status': 'Success',
+                    'message': 'Accepted',
+                })
+            except Exception:
+                return JsonResponse({
+                    'status': 'Failed',
+                    'message': f'{Exception}'
+                })
+        else:
+            return JsonResponse({
+                'status': 'Failed',
+                'message': 'Invalid request',
+                })
+
+def decline_ordered_food(request):
+    if request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            ordered_food_id = request.GET['ordered_food_id']
+            try:
+                fooditem: OrderedFood = OrderedFood.objects.get(id=ordered_food_id)
+                fooditem.status = 'Cancelled'
+                fooditem.save()
+                return JsonResponse({
+                    'status': 'Success',
+                    'message': 'Declined',
+                })
+            except Exception:
+                return JsonResponse({
+                    'status': 'Failed',
+                    'message': f'{Exception}'
+                })
+        else:
+            return JsonResponse({
+                'status': 'Failed',
+                'message': 'Invalid request',
+                })
+
 

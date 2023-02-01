@@ -12,6 +12,7 @@ $(document).ready(function(){
     //     console.log(response.id);
     // });
 
+
     // show block of custom reciver
     function DeliveryCredentials() {
         let checkBox = document.getElementById("chk_reciver");

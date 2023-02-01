@@ -5,14 +5,14 @@
 {% include 'includes/alerts.html'%}
 
 <div class="main-section">
-    {% include 'includes/cover_customer.html' %}
+    {% include 'includes/cover.html' %}
     <div class="page-section account-header buyer-logged-in">
         <div class="container">
             <div class="row">
                 <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12">
-                    {% include 'includes/c_sidebar.html' %}
+                    {% include 'includes/v_sidebar.html' %}
                 </div>
-                <div class="col-lg-9 col-md-8 col-sm-12 col-xs-12">
+                <div class="col-lg-6 col-md-8 col-sm-12 col-xs-12">
                     <div class="user-dashboard loader-holder">
                         <div class="user-holder">
                             
@@ -27,18 +27,19 @@
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="user-orders-list">
                                         <div class='billing-address'>
-                                            <div><b>{{order.name}}</b></div>
-                                            <div>{{order.address}}</div>
-                                            <div>{{order.city}} - {{order.pin_code}}</div>
+                                            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                                <div><b>{{order.name}}</b></div>
+                                                <div>{{order.address}}</div>
+                                                <div>{{order.city}} - {{order.pin_code}}</div>
 
-                                            <div>{{order.state}}, {{order.country}}</div>
-                                            <div>Phone number : {{order.phone}}</div>
-                                            <div>Email address : {{order.email}}</div>
-                                            <div>Payment method : Cash</div>
-                                            <div>Amount due : {{order.total}} $</div>
-                                            <div>Order number: {{order.order_number}}</div>
-                                            <div>Created at : {{order.created_at}}</div>
-                                            {% if order.status == "New" %}
+                                                <div>{{order.state}}, {{order.country}}</div>
+                                                <div>Phone number : {{order.phone}}</div>
+                                                <div>Email address : {{order.email}}</div>
+                                                <div>Payment method : Cash</div>
+                                                <div>Amount due : $ {{amount_due}}</div>
+                                                <div>Order number: {{order.order_number}}</div>
+                                                <div>Created at : {{order.created_at}}</div>
+                                                {% if order.status == "New" %}
                                                     <div>Status : <span class='badge badge-primary'>{{order.status}}</span> </div>    
                                                     {% elif order.status == "Accepted" %}
                                                     <div>Status : <span class='badge badge-warning'>{{order.status}}</span> </div> 
@@ -47,9 +48,26 @@
                                                     {% else %}
                                                     <div>Status : <span class='badge badge-danger'>{{order.status}}</span> </div> 
                                                 {% endif %}
+                                            </div>
+                                            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 text-center">
+                                                <form action="" method="">
+                                                    
+                                                    <div>
+                                                        <div>
+                                                            <strong>Change status of your order</strong>
+                                                            <div style="width: 150px;" class='container' >{{form.status}}</div>
+                                                        </div>
+                                                        <button class='btn btn-outline-success' value="Change status">Change status</button>
+                                                    </div>
+                                                    
+                                                </form>
+                                            
+                                            </div>
                                             
                                         </div>
                                         <hr>
+
+                                    
                                         <h4>Ordered Products</h4>
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             
@@ -66,15 +84,15 @@
                                                         <a href="{% url 'vendor_detail' food.fooditem.vendor.vendor_slug %}" class="badge badge-danger" style="width: auto;">{{food.fooditem.vendor}}</a></br>
                                                         Price: {{food.price}} $</br>
                                                         Quantity: {{food.quantity}}</br>
+                                                        Status: <span id='status-{{food.id}}'>{{food.status}}</span></br>
                                                         {% if food.status == 'New' %}
-                                                        Status: <span class="badge badge-primary">{{food.status}}</span>
+                                                            <div id="statusButtons-{{food.id}}">
+                                                                <a class='btn btn-outline-success accept-order' data-url="{% url 'accept_ordered_food'%}" data-id='{{food.id}}' >Accept</a>
+                                                                <a class='btn btn-outline-danger decline-order' data-url="{% url 'decline_ordered_food'%}" data-id='{{food.id}}'>Decline</a>
+                                                            </div>
+                                                        {% endif %} 
                                                         
-                                                        {% elif food.status == "Accepted" %}
-                                                        Status: <span class="badge badge-success">{{food.status}}</span>
-                                                        {% else %}
-                                                        Status: <span class="badge badge-secondary">{{food.status}}</span>
-                                                        {% endif %}
-                                                    </br>
+                                                        
                                                     </p>
                                                     
                                                 </div>
@@ -92,6 +110,8 @@
                         </div>
                     </div>
                 </div>
+                
+
             </div>
         </div>
     </div>

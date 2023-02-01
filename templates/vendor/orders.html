@@ -1,0 +1,86 @@
+{% extends 'base.html'%}
+{% load static %}
+
+{% block content%}
+{% include 'includes/alerts.html'%}
+
+<div class="main-section">
+    {% include 'includes/cover.html' %}
+    <div class="page-section account-header buyer-logged-in">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                    {% include 'includes/v_sidebar.html' %}
+                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                    <div class="user-dashboard loader-holder">
+                        <div class="user-holder">
+                            
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="row">
+                                    <div class="element-title has-border right-filters-row">
+                                        <h5>Your Orders</h5>
+                                        <div class="right-filters row pull-right">
+                                            <div class="col-lg-6 col-md-6 col-xs-6">
+                                                <div class="input-field">
+                                                    <select class="chosen-select-no-single">
+                                                        <option selected="selected" value="All">All orders</option>
+                                                        <option value="New">New</option>
+                                                        <option value="Accepted">Accepted</option>
+                                                        <option value="Completed">Completed</option>
+                                                        <option value="Cancelled">Cancelled</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="user-orders-list">
+                                        <ul class="table-generic">
+                                            <li class="order-heading-titles">
+                                                <div>Order id</div>
+                                                <div>Date</div>
+                                                <div>Total Price</div>
+                                                
+                                                <div>Status</div>
+                                                <div>More</div>
+                                            </li>
+
+                                            {% for order in orders %}
+                                            <li class="order-heading-titles">
+                                                <div><a href="{% url 'vendor_order_detail' order.order_number %}">order - {{order.order_number}}</a></div>
+                                                <div>{{order.created_at}}</div>
+                                                <div>$ {{order.amount_for_vendor}}</div>
+
+                                                {% if order.status == "New" %}
+                                                    <div><span class='badge badge-primary' style='color:white;'>{{order.status}}</span></div>
+                                                {% elif order.status == "Accepted" %}
+                                                    <div><span class='badge badge-warning'>{{order.status}}</span></div>
+                                                {% elif order.status == "Completed" %}
+                                                    <div><span class='badge badge-success' style='color:white;'>{{order.status}}</span></div>
+                                                {% else %}
+                                                    <div><span class='badge badge-danger' style='color:white;'>{{order.status}}</span></div>
+                                                {% endif %}
+                                                    <div><a href="{% url 'vendor_order_detail' order.order_number %}" class="btn btn-outline-danger">Details</a></td></div>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                        											
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main Section End -->
+
+{% endblock %}
