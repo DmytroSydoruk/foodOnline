@@ -334,9 +334,11 @@ def order_detail(request, order_number):
 def change_status(request):
     if request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            
+            order_id = request.GET['order_id']
+            order_status = request.GET['order_status']
             try:
-                
+                order = Order.objects.get(pk=order_id)
+                print(order.order_number)
                 return JsonResponse({
                     'status': 'Success',
                     'message': '',
@@ -376,7 +378,7 @@ def accept_ordered_food(request):
                 'message': 'Invalid request',
                 })
 
-    
+
 def decline_ordered_food(request):
     if request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':

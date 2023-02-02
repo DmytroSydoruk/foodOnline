@@ -41,20 +41,16 @@
                                                 <div>Created at : {{order.created_at}}</div>
                                                 <div style='display: inline;'>
                                                     <span>Status : </span>
-                                                    <select class="chosen-select-no-single select-status" id='select-status' style='width:150px;'>
-                                                        
+                                                    <select 
+                                                        class="chosen-select-no-single select-status"
+                                                        data-url="{% url 'change_status' %}" 
+                                                        data-id="{{order.id}}"
+                                                        style='width:150px;'>
                                                         <option value="{{order.status}}" selected="selected">{{order.status}}</option>
                                                         {% for status in order_statuses %}
-                                                        <option value="{{status}}">{{status}}</option>
+                                                            <option value="{{status}}">{{status}}</option>
                                                         {% endfor %}
                                                     </select>
-
-                                                    {% comment %} <script>
-
-                                                        $(".select-status").change(function(){
-                                                            alert('works');
-                                                        });
-                                                    </script> {% endcomment %}
                                                 </div>
                                                 
                                                 

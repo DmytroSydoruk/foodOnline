@@ -18,6 +18,7 @@ urlpatterns = [
          views.accept_ordered_food, name='accept_ordered_food'),
     path('decline-ordered-food/',
          views.decline_ordered_food, name='decline_ordered_food'),
+    path('change-status/', views.change_status, name='change_status'),
 
 
 

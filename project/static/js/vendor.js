@@ -40,8 +40,24 @@ $(document).ready(function(){
         });
     });
 
+    // change order status
     $(".select-status").change(function(){
-        alert('works');
+        url = $(this).attr('data-url');
+        order = $(this).attr('data-id');
+        $('select option:selected').each(function(){
+            $.ajax({
+                type:"GET",
+                data:{
+                    order_id: order,
+                    order_status: $(this).text(),
+                },
+                url: url,
+                success: function(response){
+                    console.log(response);
+                },
+
+            });
+        });
     });
 
 
