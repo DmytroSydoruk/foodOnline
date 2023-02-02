@@ -27,7 +27,7 @@
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="user-orders-list">
                                         <div class='billing-address'>
-                                            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                 <div><b>{{order.name}}</b></div>
                                                 <div>{{order.address}}</div>
                                                 <div>{{order.city}} - {{order.pin_code}}</div>
@@ -39,29 +39,25 @@
                                                 <div>Amount due : $ {{amount_due}}</div>
                                                 <div>Order number: {{order.order_number}}</div>
                                                 <div>Created at : {{order.created_at}}</div>
-                                                {% if order.status == "New" %}
-                                                    <div>Status : <span class='badge badge-primary'>{{order.status}}</span> </div>    
-                                                    {% elif order.status == "Accepted" %}
-                                                    <div>Status : <span class='badge badge-warning'>{{order.status}}</span> </div> 
-                                                    {% elif order.status == "Completed" %}
-                                                    <div>Status : <span class='badge badge-success'>{{order.status}}</span> </div> 
-                                                    {% else %}
-                                                    <div>Status : <span class='badge badge-danger'>{{order.status}}</span> </div> 
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 text-center">
-                                                <form action="" method="">
-                                                    
-                                                    <div>
-                                                        <div>
-                                                            <strong>Change status of your order</strong>
-                                                            <div style="width: 150px;" class='container' >{{form.status}}</div>
-                                                        </div>
-                                                        <button class='btn btn-outline-success' value="Change status">Change status</button>
-                                                    </div>
-                                                    
-                                                </form>
-                                            
+                                                <div style='display: inline;'>
+                                                    <span>Status : </span>
+                                                    <select class="chosen-select-no-single select-status" id='select-status' style='width:150px;'>
+                                                        
+                                                        <option value="{{order.status}}" selected="selected">{{order.status}}</option>
+                                                        {% for status in order_statuses %}
+                                                        <option value="{{status}}">{{status}}</option>
+                                                        {% endfor %}
+                                                    </select>
+
+                                                    {% comment %} <script>
+
+                                                        $(".select-status").change(function(){
+                                                            alert('works');
+                                                        });
+                                                    </script> {% endcomment %}
+                                                </div>
+                                                
+                                                
                                             </div>
                                             
                                         </div>

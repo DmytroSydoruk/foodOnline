@@ -311,19 +311,46 @@ def orders(request):
 
 def order_detail(request, order_number):
     order = Order.objects.get(order_number=order_number)
-    vendor = Vendor.objects.get(user=request.user)
+    _vendor = Vendor.objects.get(user=request.user)
     ordered_products = OrderedFood.objects.filter(
-        order=order, fooditem__vendor=vendor)
+        order=order, fooditem__vendor=_vendor)
     amount_due = OrderedFood.objects.filter(
-        order=order, fooditem__vendor=vendor).aggregate(Sum('amount'))
+        order=order, fooditem__vendor=_vendor).aggregate(Sum('amount'))
     form = OrderChangeStatus(instance=order)
+    order_statuses = [option[0] for option in Order.status.field.choices]
+    _order_status = order.status
+    order_statuses.remove(_order_status)
+
     context = {
         'order': order,
         'ordered_products': ordered_products,
+        'order_statuses':order_statuses,
         'amount_due': amount_due['amount__sum'],
         'form': form,
     }
     return render(request, 'vendor/vendor_order_detail.html', context)
+
+
+def change_status(request):
+    if request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            
+            try:
+                
+                return JsonResponse({
+                    'status': 'Success',
+                    'message': '',
+                })
+            except Exception:
+                return JsonResponse({
+                    'status': 'Failed',
+                    'message': f'{Exception}'
+                })
+        else:
+            return JsonResponse({
+                'status': 'Failed',
+                'message': 'Invalid request',
+                })
 
 
 def accept_ordered_food(request):
@@ -349,6 +376,7 @@ def accept_ordered_food(request):
                 'message': 'Invalid request',
                 })
 
+    
 def decline_ordered_food(request):
     if request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -371,5 +399,4 @@ def decline_ordered_food(request):
                 'status': 'Failed',
                 'message': 'Invalid request',
                 })
-
 

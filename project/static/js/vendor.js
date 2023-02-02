@@ -40,4 +40,9 @@ $(document).ready(function(){
         });
     });
 
+    $(".select-status").change(function(){
+        alert('works');
+    });
+
+
 });
