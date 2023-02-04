@@ -4,8 +4,17 @@ Hi {{order.name}},
 
 Thank you for your order!
 
+Resraurant: {{order.vendor}}
 Your order number: {{order.order_number}}
+
+Ordered products:
+
+{% for item in ordered_food %}
+{{item.fooditem}}   x {{item.quantity}}   $ {{item.amount}}
+{% endfor %}
+
 Amount due: {{order.total}} $
 
-    
+Wait for approval call
+
 {% endautoescape %}

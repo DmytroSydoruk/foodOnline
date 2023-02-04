@@ -52,7 +52,9 @@
 
                                             {% for order in orders %}
                                             <li class="order-heading-titles-order" data-id="{{order.status}}">
-                                                <div><a href="{% url 'cust_order_detail' order.order_number %}">order - {{order.order_number}}</a></div>
+                                                <div class='text-center'><a href="{% url 'cust_order_detail' order.order_number %}">order - {{order.order_number}}</a>
+                                                <span class='badge badge-secondary' style='color:white;'>{{order.vendor}}</span>
+                                                </div>
                                                 <div>{{order.created_at}}</div>
                                                 <div>$ {{order.total}}</div>
 

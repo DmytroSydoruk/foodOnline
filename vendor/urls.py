@@ -19,7 +19,6 @@ urlpatterns = [
     path('decline-ordered-food/',
          views.decline_ordered_food, name='decline_ordered_food'),
     path('change-status/', views.change_status, name='change_status'),
-    path('filter-orders/', views.filter_orders, name='filter_orders'),
 
 
 

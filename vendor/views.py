@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from .forms import VendorForm, OpeningHourForm
 from accounts.forms import UserProfileForm
 from accounts.models import UserProfile, User
+from accounts.utils import send_notification
 from .models import Vendor, OpeningHour
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -298,7 +299,7 @@ def remove_opening_hours(request, pk: int = None):
 def orders(request):
     vendor = Vendor.objects.get(user=request.user)
     orders = Order.objects.filter(
-        vendors__in=[vendor.id]).order_by('-created_at')
+        vendor=vendor.id).order_by('-created_at')
     for order in orders:
         order.amount_for_vendor = OrderedFood.objects.filter(
             order=order, fooditem__vendor=vendor).aggregate(Sum('amount'))['amount__sum']
@@ -355,6 +356,30 @@ def change_status(request):
                 'message': 'Invalid request',
                 })
 
+def notify_customer(request, order_id:int,  order_status:str):
+    context = {
+        'user': Order.objects.get(id=order_id),
+        'order': Order.objects.get(id=order_id),
+    }
+    email_template = 'order_confirmation_email.html'
+    match order_status:
+        case "New":
+            return
+
+        case "Accepted":
+            email_subject = "Your order is accepted!"
+            context['ordered_food'] = OrderedFood.objects.filter(order=context['order'])
+        case "Completed": 
+            email_subject = "Your order was completed successfuly"
+        case "Cancelled": 
+            email_subject = "Your order was cancelled for some reason"
+    
+
+    
+
+
+
+
 
 def accept_ordered_food(request):
     if request.user.is_authenticated:
@@ -391,27 +416,6 @@ def decline_ordered_food(request):
                 return JsonResponse({
                     'status': 'Success',
                     'message': 'Declined',
-                })
-            except Exception:
-                return JsonResponse({
-                    'status': 'Failed',
-                    'message': f'{Exception}'
-                })
-        else:
-            return JsonResponse({
-                'status': 'Failed',
-                'message': 'Invalid request',
-                })
-
-
-def filter_orders(request):
-    if request.user.is_authenticated:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            try:
-                
-                return JsonResponse({
-                    'status': 'Success',
-                    'message': '',
                 })
             except Exception:
                 return JsonResponse({

@@ -3,24 +3,6 @@ from accounts.models import User
 from menu.models import FoodItem
 from vendor.models import Vendor
 
-# class Payment(models.Model):
-
-#     PAYMENT_METHODS = (
-#         ('Cash', 'Cash'),
-#     )
-
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     transaction_id = models.CharField(max_length=100)
-#     payment_method = models.CharField(max_length=20 , choices=PAYMENT_METHODS)
-#     amount = models.CharField(max_length=100 )
-#     status = models.CharField(max_length=100)
-#     created_at = models.DateTimeField(auto_now_add=True)
-
-#     def __unicode__(self):
-#         return self.transaction_id
-
-
-
 
 class Order(models.Model):
     STATUS = (
@@ -31,8 +13,7 @@ class Order(models.Model):
     )
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    # payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null=True)
-    vendors = models.ManyToManyField(Vendor, blank=True)
+    vendor = models.ForeignKey(Vendor, blank=True, on_delete=models.CASCADE , null=True)
     total_data = models.JSONField(blank=True, null=True)
     order_number = models.CharField(max_length=20)
     first_name = models.CharField(max_length=50)
@@ -46,7 +27,6 @@ class Order(models.Model):
     pin_code = models.CharField(max_length=10)
     total = models.FloatField()
     status = models.CharField(max_length=15, choices=STATUS, default='New')
-    # payment_method = models.CharField(max_length=25)
     is_ordered = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -54,9 +34,6 @@ class Order(models.Model):
     @property
     def name(self):
         return f'{self.first_name} {self.last_name}'
-
-    def restaurants(self):
-        return ', '.join([str(i) for i in self.vendors.all()])
 
     def __str__(self):
         return self.order_number
@@ -75,7 +52,8 @@ class OrderedFood(models.Model):
     quantity = models.IntegerField()
     price = models.FloatField()
     amount = models.FloatField()
-    status = models.CharField(choices=STATUS,blank=True, null=True, max_length=10)
+    status = models.CharField(
+        choices=STATUS, blank=True, null=True, max_length=10)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

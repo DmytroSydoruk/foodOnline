@@ -7,12 +7,10 @@ class OrderedFoodInline(admin.TabularInline):
     readonly_fields = ['order','user', 'fooditem', 'quantity', 'price', 'amount']
     extra = 0
 
-
-
 class OrderAdmin(admin.ModelAdmin):
     list_display = ['order_number', 'name',
                     'phone', 'email', 'total',
-                    'restaurants', 'is_ordered']
+                    'vendor', 'is_ordered']
     inlines = [OrderedFoodInline]
 
 

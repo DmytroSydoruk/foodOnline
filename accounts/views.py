@@ -204,14 +204,14 @@ def custDashboard(request):
 def vendorDashboard(request):
     vendor = Vendor.objects.get(user=request.user)
 
-    _completed_orders = Order.objects.filter(vendors__in=[vendor.id], status="Completed")
+    _completed_orders = Order.objects.filter(vendor=vendor.id, status="Completed")
 
     total_revenue:float = 0
     for order in _completed_orders:
         total_revenue += order.total
 
-    new_orders = Order.objects.filter(vendors__in=[vendor.id], is_ordered=True, status="New").order_by('-created_at')
-    total_orders = Order.objects.filter(vendors__in=[vendor.id], is_ordered=True).count
+    new_orders = Order.objects.filter(vendor=vendor.id, is_ordered=True, status="New").order_by('-created_at')
+    total_orders = Order.objects.filter(vendor=vendor.id, is_ordered=True).count
 
     this_month_total = Order.objects.filter(created_at__year=for_this_month()['year'], created_at__month=for_this_month()['month'], status="Completed").aggregate(Sum('total'))
 
