@@ -341,6 +341,7 @@ def change_status(request):
                 order = Order.objects.get(pk=order_id)
                 order.status = order_status
                 order.save()
+                notify_customer(order_status=order.status,order_id=order_id)
                 return JsonResponse({
                     'status': 'Success',
                     'message': '',
@@ -356,25 +357,26 @@ def change_status(request):
                 'message': 'Invalid request',
                 })
 
-def notify_customer(request, order_id:int,  order_status:str):
+def notify_customer(order_id:int,  order_status:str):
     context = {
-        'user': Order.objects.get(id=order_id),
-        'order': Order.objects.get(id=order_id),
+        'user': Order.objects.get(pk=order_id),
+        'order': Order.objects.get(pk=order_id),
     }
-    email_template = 'order_confirmation_email.html'
+    email_template = 'change_order_status.html'
     match order_status:
-        case "New":
-            return
-
+        case "New":return
         case "Accepted":
             email_subject = "Your order is accepted!"
+            context['accepted'] = True
             context['ordered_food'] = OrderedFood.objects.filter(order=context['order'])
         case "Completed": 
             email_subject = "Your order was completed successfuly"
+            context['completed'] = True
         case "Cancelled": 
             email_subject = "Your order was cancelled for some reason"
+            context['cancelled'] = True
     
-
+    send_notification(email_subject, email_template, context)
     
 
 

@@ -1,5 +1,25 @@
 {% autoescape off %}
 
+Hi {{order.name}},
 
+{% if accepted %}
+Your order was accepted by {{order.vendor}} admin.
+Your order:
 
+{% for item in ordered_food %}
+{{item}}  x{{item.quantity}}  $ {{item.amount}}  {{item.status}}
+
+{% endfor %}
+{% endif %}
+{% if completed %}
+Your order {{order.order_number}} was completed!
+{% endif %}
+{% if cancelled %}
+Your order {{order.order_number}} was cancelled!
+Contact to {{order.vendor}} admin for further explanation
+
+Email: {{order.vendor.user.email}}
+Mobile phone: {{order.vendor.user.phone_number}}
+{% endif %}
+Thank you for been with us!
 {% endautoescape %}
