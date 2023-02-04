@@ -5,12 +5,12 @@ from .forms import OrderForm
 from .models import Order, OrderedFood
 from .utils import generate_order_number
 from django.http import HttpResponse
-from accounts.utils import send_notification ,send_notification_to_vendors
+from accounts.utils import send_notification, send_notification_to_vendors
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 
-login_required(login_url='login')
+@login_required(login_url='login')
 def place_order(request):
     total = get_cart_amount(request)['total']
     vendors_ids = []
@@ -20,7 +20,6 @@ def place_order(request):
     for item in cart_items:
         if item.fooditem.vendor.id not in vendors_ids:
             vendors_ids.append(item.fooditem.vendor.id)
-
 
     if request.method == "POST":
         form = OrderForm(request.POST)
@@ -35,7 +34,7 @@ def place_order(request):
             order.state = form.cleaned_data['state']
             order.city = form.cleaned_data['city']
             order. pin_code = form.cleaned_data['pin_code']
-            
+
             order.user = request.user
             order.total = total
 
@@ -55,7 +54,7 @@ def place_order(request):
     return render(request, 'orders/place_order.html')
 
 
-login_required(login_url='login')
+@login_required(login_url='login')
 def confirm_order(request, order_number):
     # change status
     order = Order.objects.get(user=request.user, order_number=order_number)
@@ -83,7 +82,7 @@ def confirm_order(request, order_number):
             'user': order,
             'order': order,
         }
-        send_notification(email_subject,email_template,context)
+        send_notification(email_subject, email_template, context)
     except Exception as e:
         print(f'Exception: send customer email error {e}')
 
@@ -99,16 +98,15 @@ def confirm_order(request, order_number):
             'vendors_emails': vendors_email,
             'order': order,
         }
-        send_notification_to_vendors(email_subject,email_template,context)
+        send_notification_to_vendors(email_subject, email_template, context)
 
     except Exception as e:
         print(f'Exception: send vendors email error {e}')
-        
+
     # send email to vendors
-    
 
     # Clear cart
     cart_items.delete()
 
-    messages.success(request,'Your order was successfuly created')
+    messages.success(request, 'Your order was successfuly created')
     return redirect('myAccount')

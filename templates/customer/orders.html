@@ -23,7 +23,7 @@
                                         <div class="right-filters row pull-right">
                                             <div class="col-lg-6 col-md-6 col-xs-6">
                                                 <div class="input-field">
-                                                    <select class="chosen-select-no-single">
+                                                    <select class="chosen-select-no-single select-filter-order">
                                                         <option selected="selected" value="All">All orders</option>
                                                         <option value="New">New</option>
                                                         <option value="Accepted">Accepted</option>
@@ -51,7 +51,7 @@
                                             </li>
 
                                             {% for order in orders %}
-                                            <li class="order-heading-titles">
+                                            <li class="order-heading-titles-order" data-id="{{order.status}}">
                                                 <div><a href="{% url 'cust_order_detail' order.order_number %}">order - {{order.order_number}}</a></div>
                                                 <div>{{order.created_at}}</div>
                                                 <div>$ {{order.total}}</div>

@@ -338,7 +338,8 @@ def change_status(request):
             order_status = request.GET['order_status']
             try:
                 order = Order.objects.get(pk=order_id)
-                print(order.order_number)
+                order.status = order_status
+                order.save()
                 return JsonResponse({
                     'status': 'Success',
                     'message': '',
@@ -402,3 +403,23 @@ def decline_ordered_food(request):
                 'message': 'Invalid request',
                 })
 
+
+def filter_orders(request):
+    if request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            try:
+                
+                return JsonResponse({
+                    'status': 'Success',
+                    'message': '',
+                })
+            except Exception:
+                return JsonResponse({
+                    'status': 'Failed',
+                    'message': f'{Exception}'
+                })
+        else:
+            return JsonResponse({
+                'status': 'Failed',
+                'message': 'Invalid request',
+                })

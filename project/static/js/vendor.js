@@ -53,12 +53,34 @@ $(document).ready(function(){
                 },
                 url: url,
                 success: function(response){
-                    console.log(response);
+                    
                 },
 
             });
         });
     });
+
+    // filter orders by status
+    $(".select-filter-order").change(function(){
+        let filter = $(this).val();
+        filterOrders(filter);
+        
+        });
+    
+
+    function filterOrders(value){
+        let list = $('.order-heading-titles-order');
+        $(list).hide();
+        if(value == 'All'){
+            $('.order-heading-titles-order').each(function(i){
+                $(this).show();
+            });
+        }else{
+            $(".order-heading-titles-order[data-id*="+value+"]").each(function(i){
+                $(this).show();
+            })
+        };
+    };
 
 
 });
