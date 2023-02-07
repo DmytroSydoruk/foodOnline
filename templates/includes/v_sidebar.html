@@ -31,14 +31,8 @@
                     Orders
                 </a>
             </li>
-            <li>
-                <a href="restaurant-earnings.html">
-                    <i class="icon-money"></i>
-                    Earnings
-                </a>
-            </li>
-            <li>
-                <a href="restaurant-statement.html">
+            <li class="{% if 'statement' in request.path %}active{% endif %}">
+                <a href="{% url 'statement' %}">
                     <i class="icon-file-text22"></i>
                     Statement
                 </a>

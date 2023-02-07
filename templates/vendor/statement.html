@@ -1,0 +1,88 @@
+{% extends 'base.html'%}
+{% load static %}
+
+{% block content%}
+{% include 'includes/alerts.html'%}
+
+<div class="main-section">
+    {% include 'includes/cover.html' %}
+    <div class="page-section account-header buyer-logged-in">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                    {% include 'includes/v_sidebar.html' %}
+                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                    <div class="user-dashboard loader-holder">
+                        <div class="user-holder">
+                            <div class='row'>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 mt-5">
+                                    <h4> Restaurant profit</h4>
+                                    <p>(Detailed format)</p>
+                                </div>
+                                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-2">
+                                    <div class="restaurant-info">
+                                        <div class="img-holder">
+                                            <ul class="foodbakery-gallery-holder">
+                                                <li class="gal-img">
+                                                    <div class="drag-list">
+                                                        <div class="item-thumb">
+                                                            {% if vendor.user_profile.profile_picture %}
+                                                                <img class="thumbnail" src="{{ vendor.user_profile.profile_picture.url}}" alt="">
+                                                            {% else %}
+                                                                <img class="thumbnail" src="{% static 'images/default-profile.png' %}" alt="" >
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="text-holder">
+                                            <h5>{{vendor.vendor_name}}</h5>
+                                            <div class="upload-gallery">
+                                                <p>Registered at : {{vendor.created_at|date:"M d, Y"}}</p>
+                                            </div>
+                                        </div>
+                                        <label class='text-danger'>{{profile_form.profile_picture.errors}}</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="user-orders-list">
+                                        <h5>Reriod : {% now 'd.m.Y' %}</h5>
+                                        <ul class="table-generic">
+                                            <li class="order-heading-titles">
+                                                <div class='text-center'>Food & Beverages Sales</div>
+                                                <div>$</div>
+                                                <div>% of total</div>
+                                            </li>
+
+                                            {% for category in categories %}
+                                            <li class="order-heading-titles-order" >
+                                                <div class='text-center'>{{category.category_name}}</div>
+                                                <div>$ {{category.income}}</div>
+                                                <div>% {{category.persents}}</div>
+                                            </li>
+                                            {% endfor %}
+                                            <li class="order-heading-titles-order" style='background-color:; font-weight: 700;'>
+                                                <div>Total income</div>
+                                                <div>$ {{total_income}}</div>
+                                                <div>% 100</div>
+                                            </li>
+                                        </ul>
+                                        											
+                                    </div>
+                                </div>
+                                
+
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main Section End -->
+
+{% endblock %}

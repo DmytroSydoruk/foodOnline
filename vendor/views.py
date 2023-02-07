@@ -17,6 +17,7 @@ from orders.models import Order, OrderedFood
 from orders.forms import OrderChangeStatus
 from django.db.models import Sum
 from django.http import JsonResponse
+from .utils import vendor_statement
 
 
 def get_vendor(request) -> Vendor:
@@ -325,7 +326,7 @@ def order_detail(request, order_number):
     context = {
         'order': order,
         'ordered_products': ordered_products,
-        'order_statuses':order_statuses,
+        'order_statuses': order_statuses,
         'amount_due': amount_due['amount__sum'],
         'form': form,
     }
@@ -341,7 +342,7 @@ def change_status(request):
                 order = Order.objects.get(pk=order_id)
                 order.status = order_status
                 order.save()
-                notify_customer(order_status=order.status,order_id=order_id)
+                notify_customer(order_status=order.status, order_id=order_id)
                 return JsonResponse({
                     'status': 'Success',
                     'message': '',
@@ -355,32 +356,30 @@ def change_status(request):
             return JsonResponse({
                 'status': 'Failed',
                 'message': 'Invalid request',
-                })
+            })
 
-def notify_customer(order_id:int,  order_status:str):
+
+def notify_customer(order_id: int,  order_status: str):
     context = {
         'user': Order.objects.get(pk=order_id),
         'order': Order.objects.get(pk=order_id),
     }
     email_template = 'change_order_status.html'
     match order_status:
-        case "New":return
+        case "New": return
         case "Accepted":
             email_subject = "Your order is accepted!"
             context['accepted'] = True
-            context['ordered_food'] = OrderedFood.objects.filter(order=context['order'])
-        case "Completed": 
+            context['ordered_food'] = OrderedFood.objects.filter(
+                order=context['order'])
+        case "Completed":
             email_subject = "Your order was completed successfuly"
             context['completed'] = True
-        case "Cancelled": 
+        case "Cancelled":
             email_subject = "Your order was cancelled for some reason"
             context['cancelled'] = True
-    
+
     send_notification(email_subject, email_template, context)
-    
-
-
-
 
 
 def accept_ordered_food(request):
@@ -388,7 +387,8 @@ def accept_ordered_food(request):
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             ordered_food_id = request.GET['ordered_food_id']
             try:
-                fooditem: OrderedFood = OrderedFood.objects.get(id=ordered_food_id)
+                fooditem: OrderedFood = OrderedFood.objects.get(
+                    id=ordered_food_id)
                 fooditem.status = 'Accepted'
                 fooditem.save()
                 return JsonResponse({
@@ -404,7 +404,7 @@ def accept_ordered_food(request):
             return JsonResponse({
                 'status': 'Failed',
                 'message': 'Invalid request',
-                })
+            })
 
 
 def decline_ordered_food(request):
@@ -412,7 +412,8 @@ def decline_ordered_food(request):
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             ordered_food_id = request.GET['ordered_food_id']
             try:
-                fooditem: OrderedFood = OrderedFood.objects.get(id=ordered_food_id)
+                fooditem: OrderedFood = OrderedFood.objects.get(
+                    id=ordered_food_id)
                 fooditem.status = 'Cancelled'
                 fooditem.save()
                 return JsonResponse({
@@ -428,4 +429,8 @@ def decline_ordered_food(request):
             return JsonResponse({
                 'status': 'Failed',
                 'message': 'Invalid request',
-                })
+            })
+
+
+def statement(request):
+    return render(request, 'vendor/statement.html', vendor_statement(request))

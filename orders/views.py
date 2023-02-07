@@ -4,7 +4,6 @@ from marketplace.context_processors import get_cart_amount
 from .forms import OrderForm
 from .models import Order, OrderedFood
 from .utils import generate_order_number
-from django.http import HttpResponse
 from accounts.utils import send_notification
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
