@@ -12,6 +12,9 @@ from marketplace.models import Cart
 
 from django.db.models import Sum, F
 
+from project.tasks import send_email
+from django.template.loader import render_to_string
+
 
 @login_required(login_url='login')
 def place_order(request):
@@ -66,7 +69,6 @@ def confirm_order(request):
     for order in orders:
         order.is_ordered = True
         order.save()
-    print(orders)
     # add fooitems to ordered food
     cart_items = Cart.objects.filter(user=request.user)
     for order in orders:
@@ -88,14 +90,19 @@ def confirm_order(request):
     try:
         for order in orders:
             email_subject = "Thank you for your order!"
-            email_template = 'order_confirmation_email.html'
+            email_template = 'accounts/emails/order_confirmation_email.html'
             ordered_food = OrderedFood.objects.filter(order=order)
             context = {
                 'user': order,
                 'order': order,
                 'ordered_food':ordered_food,
             }
-            send_notification(email_subject, email_template, context)
+
+            email_body = render_to_string(email_template, context)
+            user_email: str = order.email
+
+            send_email.delay(email_subject, email_body,user_email,)
+
     except Exception as e:
         print(f'Exception: send customer email error {e}')
 
@@ -108,12 +115,15 @@ def confirm_order(request):
                 'vendors_emails': order.vendor.user,
                 'order': order,
             }
-            send_notification(email_subject, email_template, context)
+             
+            email_body = render_to_string(email_template, context)
+            user_email: str = order.email
+
+            send_email.delay(email_subject, email_body,user_email,)
 
     except Exception as e:
         print(f'Exception: send vendors email error {e}')
 
-    # send email to vendors
 
     # Clear cart
     cart_items.delete()

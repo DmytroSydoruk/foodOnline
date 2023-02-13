@@ -34,11 +34,7 @@ class UserProfileForm(forms.ModelForm):
         attrs={'class': 'btn btn-info'}), validators=[allow_only_images_validator])
     cover_photo = forms.FileField(widget=forms.FileInput(
         attrs={'class': 'btn btn-info'}), validators=[allow_only_images_validator])
-
-    # latitute = forms.CharField(widget=forms.TextInput(
-    #     attrs={'readonly': 'readonly'}))
-    # longitute = forms.CharField(widget=forms.TextInput(
-    #     attrs={'readonly': 'readonly'}))
+    
 
     class Meta:
         model = UserProfile

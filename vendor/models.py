@@ -17,20 +17,21 @@ class Vendor(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
 
     def is_open(self) -> bool:
-        today = date.today().isoweekday()
-        current_day_hours = OpeningHour.objects.filter(vendor=self, day=today)
-        now = datetime.now().strftime('%H:%M:%S')
-        
-        is_open: bool =None
-        for item in current_day_hours:
-            open = str(datetime.strptime(item.from_hour,'%H:%M').time())
-            close = str(datetime.strptime(item.to_hour,'%H:%M').time())
-            if now > open and now < close:
-                return True
-            else:
-                is_open = False
+        # today = date.today().isoweekday()
+        # current_day_hours = OpeningHour.objects.filter(vendor=self, day=today)
+        # now = datetime.now().strftime("%H:%M")
+        # # is_open: bool = None
+        # for item in current_day_hours:
+        #     open = str(datetime.strptime(item.from_hour,'%H:%M').time())
+        #     close = str(datetime.strptime(item.to_hour,'%H:%M').time())
+        #     if now > open and now < close:
+        #         return True
+        #     else:
+        #         continue
+        return True
+        #         is_open = False
                 
-        return is_open
+        # return is_open
 
 
     def __str__(self) -> str:
@@ -49,11 +50,11 @@ class Vendor(models.Model):
                 if self.is_approved == True:
                     # send
                     email_subject = 'Congratulations! Your resutaurant has been approved.'
-                    send_notification(email_subject, email_template, context)
+                    send_notification.delay(email_subject, email_template, context)
                 else:
                     # send
                     email_subject = "We're sorry! You are not eligible for publishing your food menu on our marketplace."
-                    send_notification(email_subject, email_template, context)
+                    send_notification.delay(email_subject, email_template, context)
         return super(Vendor, self).save(*args, **kwargs)
 
 

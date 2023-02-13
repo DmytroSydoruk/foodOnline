@@ -379,7 +379,7 @@ def notify_customer(order_id: int,  order_status: str):
             email_subject = "Your order was cancelled for some reason"
             context['cancelled'] = True
 
-    send_notification(email_subject, email_template, context)
+    send_notification.delay(email_subject, email_template, context)
 
 
 def accept_ordered_food(request):
